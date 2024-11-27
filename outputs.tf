@@ -30,10 +30,10 @@ output "network_interfaces" {
   value       = azurerm_network_interface.virtualmachine_network_interfaces
 }
 
-# output "public_ips" {
-#   description = "The full ARM object map associated with any deployed public ip(s). Exporting this in the event that a public ip property not exposed as part of the azurerm vm export is required."
-#   value       = azurerm_public_ip.virtualmachine_public_ips
-# }
+output "public_ips" {
+  description = "The full ARM object map associated with any deployed public ip(s). Exporting this in the event that a public ip property not exposed as part of the azurerm vm export is required."
+  value       = azurerm_public_ip.virtualmachine_public_ips
+}
 
 output "resource" {
   description = "The full object for the deployed virtual machine.  This is marked sensitive as it contains specific sensitive values"
