@@ -1,7 +1,18 @@
 # terraform-azure-mcaf-virtualmachine
 Terraform module to deploy virtual machines
 
-**note** This module has a lot of items taken from the azure AVM module.
+This module's defaults are optimized and set to default to be used with gen2 images!
+
+Generation 2 pros.
+* UEFI
+* SCSI / NVMe [docs](https://learn.microsoft.com/en-us/azure/virtual-machines/enable-nvme-faqs#how-can-i-create-a-vm-with-the-nvme-interface-)
+* Secure Boot
+* vTPM
+* Trusted Launch [docs](https://learn.microsoft.com/en-us/azure/virtual-machines/trusted-launch)
+
+Generation 2 cons.
+* not all vm sizes are supported [list](https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2#generation-2-vm-sizes)
+* not all vm images are supported [list](https://learn.microsoft.com/en-us/azure/virtual-machines/generation-2#generation-2-vm-images-in-azure-marketplace)
 
 ## Usage
 
@@ -25,12 +36,14 @@ Partialy search to speed up, it can take some time if you search for all images.
 
 * --sku gen2
 * --sku 22_04
+* --sku 2025
 
 Add --all if you want to to list all available.
 
 ```shell
 # Windows
-az vm image list --location germanywestcentral --publisher MicrosoftWindowsServer --sku 2025 --output table --query "[].{Publisher:publisher, Offer:offer, Sku:sku, Version:version}"
+az vm image list --location germanywestcentral --publisher MicrosoftWindowsServer --sku hotpatch --output table --query "[].{Publisher:publisher, Offer:offer, Sku:sku, Version:version}" --all
+
 
 #Ubuntu
 az vm image list --location germanywestcentral --publisher Canonical --output table --query "[].{Publisher:publisher, Offer:offer, Sku:sku, Version:version}"
@@ -39,6 +52,8 @@ az vm image list --location germanywestcentral --publisher Canonical --output ta
 <!-- BEGIN_TF_DOCS -->
 
 <!-- END_TF_DOCS -->
+
+**note** This module has a lot of items taken from the azure AVM module.
 
 ## License
 
