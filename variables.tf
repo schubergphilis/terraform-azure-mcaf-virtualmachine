@@ -159,6 +159,7 @@ variable "data_disk_managed_disks" {
     disk_mbps_read_only                       = optional(number, null)
     disk_mbps_read_write                      = optional(number, null)
     disk_size_gb                              = optional(number, 128)
+    edge_zone                                 = optional(string, null)
     gallery_image_reference_resource_id       = optional(string)
     hyper_v_generation                        = optional(string)
     image_reference_resource_id               = optional(string)
