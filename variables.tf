@@ -28,32 +28,6 @@ variable "zone" {
 }
 
 ########## optional variables
-variable "additional_unattend_contents" {
-  type = list(object({
-    content = string
-    setting = string
-  }))
-  default     = []
-  description = <<ADDITIONAL_UNATTEND_CONTENTS
-List of objects representing unattend content settings
-
-- `content` (Required) - The XML formatted content that is added to the unattend.xml file for the specified path and component. Changing this forces a new resource to be created.
-- `setting` (Required) - The name of the setting to which the content applies. Possible values are `AutoLogon` and `FirstLogonCommands`. Changing this forces a new resource to be created.
-
-Example Inputs:
-```hcl
-#Example Reboot
-additional_unattend_contents = [
-  {
-    content = "<FirstLogonCommands><SynchronousCommand><CommandLine>shutdown /r /t 0 /c \"initial reboot\"</CommandLine><Description>reboot</Description><Order>1</Order></SynchronousCommand></FirstLogonCommands>"
-    setting = "FirstLogonCommands"
-  }
-]
-```
-ADDITIONAL_UNATTEND_CONTENTS
-  nullable    = false
-}
-
 variable "admin_password" {
   type        = string
   default     = null
@@ -65,35 +39,6 @@ variable "admin_password_key_vault_secret_name" {
   type        = string
   default     = null
   description = "DEPRECATION NOTICE: This input will be removed in favor of the name attribute in the `generated_secrets_key_vault_secret_config` input. The name of the key vault secret which should be used for the auto-generated admin password. This is only used to store auto-generated passwords. Use the `admin_password` variable and a key vault secret value reference if storing the password value in an external key vault secret."
-}
-
-variable "admin_ssh_keys" {
-  type = list(object({
-    public_key = string
-    username   = string
-  }))
-  default     = []
-  description = <<ADMIN_SSH_KEYS
-A list of objects defining one or more ssh public keys
-
-- `public_key` (Required) - The Public Key which should be used for authentication, which needs to be at least 2048-bit and in `ssh-rsa` format. Changing this forces a new resource to be created.
-- `username` (Required) - The Username for which this Public SSH Key should be configured. Changing this forces a new resource to be created. The Azure VM Agent only allows creating SSH Keys at the path `/home/{admin_username}/.ssh/authorized_keys`. As such this public key will be written to the authorized keys file. If no username is provided this module will use var.admin_username.
-
-Example Input:
-
-```hcl
-admin_ssh_keys = [
-  {
-    public_key = "<base64 string for the key>"
-    username   = "exampleuser"
-  },
-  {
-    public_key = "<base64 string for the next user key>"
-    username   = "examleuser2"
-  }
-]
-```
-  ADMIN_SSH_KEYS
 }
 
 variable "admin_username" {
@@ -387,19 +332,13 @@ DIAGNOSTIC_SETTINGS
   nullable    = false
 }
 
-variable "disable_password_authentication" {
-  type        = bool
-  default     = true
-  description = "If true this value will disallow password authentication on linux vm's. This will require at least one public key to be configured. If using the option to auto generate passwords and keys, setting this value to `false` will cause a password to be generated an stored instead of an SSH key."
-}
-
 variable "disk_controller_type" {
   type        = string
   default     = null
   description = "(Optional) - Specifies the Disk Controller Type used for this Virtual Machine.  Possible values are `SCSI` and `NVME`."
 
   validation {
-    condition     = can(regex("^(SCSI|NVMe)$", var.disk_controller_type))
+    condition     = var.disk_controller_type == null || can(regex("^(SCSI|NVMe)$", var.disk_controller_type))
     error_message = "disk_controller_type must be either `SCSI` or `NVMe`."
   }
 }
@@ -408,12 +347,6 @@ variable "edge_zone" {
   type        = string
   default     = null
   description = "(Optional) Specifies the Edge Zone within the Azure Region where this Virtual Machine should exist. Changing this forces a new Virtual Machine to be created."
-}
-
-variable "enable_automatic_updates" {
-  type        = bool
-  default     = true
-  description = "(Optional) Specifies if Automatic Updates are Enabled for the Windows Virtual Machine. Changing this forces a new resource to be created. Defaults to `true`."
 }
 
 variable "encryption_at_host_enabled" {
@@ -587,12 +520,6 @@ For simplicity this module provides the option to use an auto-generated admin us
 DESCRIPTION
 }
 
-variable "hotpatching_enabled" {
-  type        = bool
-  default     = false
-  description = "(Optional) Should the VM be patched without requiring a reboot? Possible values are `true` or `false`. Defaults to `false`. For more information about hot patching please see the [product documentation](https://docs.microsoft.com/azure/automanage/automanage-hotpatch). Hotpatching can only be enabled if the `patch_mode` is set to `AutomaticByPlatform`, the `provision_vm_agent` is set to `true`, your `source_image_reference` references a hotpatching enabled image, and the VM's `size` is set to a [Azure generation 2](https://docs.microsoft.com/azure/virtual-machines/generation-2#generation-2-vm-sizes) VM. An example of how to correctly configure a Windows Virtual Machine to use the `hotpatching_enabled` field can be found in the [`./examples/virtual-machines/windows/hotpatching-enabled`](https://github.com/hashicorp/terraform-provider-azurerm/tree/main/examples/virtual-machines/windows/hotpatching-enabled) directory within the GitHub Repository."
-}
-
 variable "license_type" {
   type        = string
   default     = null
@@ -624,21 +551,6 @@ LOCK
     condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
     error_message = "Lock kind must be either `\"CanNotDelete\"` or `\"ReadOnly\"`."
   }
-}
-
-variable "maintenance_configuration_resource_ids" {
-  type        = map(string)
-  default     = {}
-  description = <<DESCRIPTION
-A map of maintenance configuration Id(s) to apply to this virtual machine. Using a map to avoid any issues with known before apply. The key value is arbitrary as it is only used as the index for terraform.
-
-Example Input:
-```hcl
-{
-  config_1 = "<maintenance configuration Azure resource id>"
-}
-```
-DESCRIPTION
 }
 
 variable "managed_identities" {
@@ -733,18 +645,6 @@ os_disk = {
 ```
 OS_DISK
   nullable    = false
-}
-
-variable "os_type" {
-  type        = string
-  default     = "Windows"
-  description = "The base OS type of the vm to be built.  Valid answers are Windows or Linux"
-  nullable    = false
-
-  validation {
-    condition     = can(regex("^(windows|linux)$", lower(var.os_type)))
-    error_message = "Valid OS type values are Windows or Linux."
-  }
 }
 
 variable "patch_assessment_mode" {
@@ -940,8 +840,8 @@ SECRETS
 
 variable "secure_boot_enabled" {
   type        = bool
-  default     = null
-  description = "(Optional) Specifies whether secure boot should be enabled on the virtual machine. Changing this forces a new resource to be created."
+  default     = true
+  description = "(Optional) Specifies whether secure boot should be enabled on the virtual machine. Changing this forces a new resource to be created, defaults to true."
 }
 
 variable "shutdown_schedules" {
@@ -997,6 +897,17 @@ variable "sku_size" {
   default     = "Standard_D2ds_v5"
   description = "The sku value to use for this virtual machine"
   nullable    = false
+}
+
+variable "os_type" {
+  type        = string
+  default     = null
+  description = "The base OS type of the vm to be built.  Valid answers are Windows or Linux"
+
+  validation {
+    condition     = can(regex("^(windows|linux)$", lower(var.os_type)))
+    error_message = "Valid OS type values are Windows or Linux."
+  }
 }
 
 variable "source_image_reference" {
@@ -1078,12 +989,6 @@ termination_notification = {
 TERMINATION_NOTIFICATION
 }
 
-variable "timezone" {
-  type        = string
-  default     = null
-  description = "(Optional) Specifies the Time Zone which should be used by the Windows Virtual Machine, [the possible values are defined here](https://jackstromberg.com/2017/01/list-of-time-zones-consumed-by-azure/). Changing this forces a new resource to be created."
-}
-
 variable "user_data" {
   type        = string
   default     = null
@@ -1127,6 +1032,7 @@ variable "vm_agent_platform_updates_enabled" {
   type        = bool
   default     = true
   description = <<DESCRIPTION
+
   "(Optional) Specifies whether VMAgent Platform Updates is enabled. Defaults to `true`."
   Default to true to match the default behavior of the Azure Portal, can only be set to false if you use custom images with the VM Agent installed, otherwise your plan/apply will try to adjust it each run.
 
@@ -1135,39 +1041,6 @@ variable "vm_agent_platform_updates_enabled" {
 
 variable "vtpm_enabled" {
   type        = bool
-  default     = null
-  description = "(Optional) Specifies whether vTPM should be enabled on the virtual machine. Changing this forces a new resource to be created."
-}
-
-variable "winrm_listeners" {
-  type = set(object({
-    protocol        = string
-    certificate_url = optional(string)
-  }))
-  default     = []
-  description = <<WINRM_LISTENERS
-Set of objects describing the winRM listener configuration for windows VM's using the following attributes:
-
-- `protocol`        = (Required) Specifies Specifies the protocol of listener. Possible values are `Http` or `Https`
-- `certificate_url` = (Optional) The Secret URL of a Key Vault Certificate, which must be specified when `protocol` is set to `Https`. Changing this forces a new resource to be created.
-
-Example Inputs:
-
-```hcl
-#https example
-winrm_listeners = [
-  {
-  protocol = "Https"
-  certificate_url = data.azurerm_keyvault_secret.example.secret_id
-  }
-]
-#http example
-winrm_listeners = [
-  {
-    protocol = "Http"
-  }
-]
-```
-WINRM_LISTENERS
-  nullable    = false
+  default     = true
+  description = "(Optional) Specifies whether vTPM should be enabled on the virtual machine. Changing this forces a new resource to be created, defaults to true."
 }

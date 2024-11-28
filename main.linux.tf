@@ -147,34 +147,11 @@ resource "azurerm_linux_virtual_machine" "this" {
     }
   }
 
-  # depends_on = [ #set explicit depends on for each association to address delete order issues.
-  #   azurerm_network_interface_security_group_association.this,
-  #   azurerm_network_interface_application_security_group_association.this,
-  #   azurerm_network_interface_backend_address_pool_association.this,
-  #   azurerm_network_interface_application_gateway_backend_address_pool_association.this,
-  #   azurerm_network_interface_nat_rule_association.this
-  # ]
+  depends_on = [ #set explicit depends on for each association to address delete order issues.
+    azurerm_network_interface_security_group_association.this,
+    azurerm_network_interface_application_security_group_association.this,
+    azurerm_network_interface_backend_address_pool_association.this,
+    azurerm_network_interface_application_gateway_backend_address_pool_association.this,
+    azurerm_network_interface_nat_rule_association.this
+  ]
 }
-
-# #set explicit dependencies on all the child resources to ensure that they have finished update and modification prior to locking the vm
-# resource "azurerm_management_lock" "this_linux_virtualmachine" {
-#   count = (var.lock != null) && !(lower(var.os_type) == "windows") ? 1 : 0
-
-#   lock_level = var.lock.kind
-#   name       = coalesce(var.lock.name, "lock-${var.lock.kind}")
-#   scope      = azurerm_linux_virtual_machine.this[0].id
-#   notes      = var.lock.kind == "CanNotDelete" ? "Cannot delete the resource or its child resources." : "Cannot delete or modify the resource or its child resources."
-
-#   depends_on = [
-#     azurerm_managed_disk.this,
-#     azurerm_network_interface.virtualmachine_network_interfaces,
-#     azurerm_public_ip.virtualmachine_public_ips,
-#     azurerm_role_assignment.system_managed_identity,
-#     azurerm_virtual_machine_data_disk_attachment.this_linux,
-#     azurerm_virtual_machine_data_disk_attachment.this_windows,
-#     azurerm_linux_virtual_machine.this,
-#     azurerm_monitor_diagnostic_setting.this_nic_diags,
-#     azurerm_monitor_diagnostic_setting.this_vm_diags,
-#     azurerm_virtual_machine_extension.this_extension
-#   ]
-# }
