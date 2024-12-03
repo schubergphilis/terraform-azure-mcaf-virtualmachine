@@ -147,7 +147,7 @@ module "vm" {
       settings                   = <<SETTINGS
           {
               "EncryptionOperation": "EnableEncryption",
-              "KeyVaultURL": "${data.azurerm_key_vault.this.vault_uri}",
+              "KeyVaultURL": "https://test-kv.vault.azure.net/",
               "KeyVaultResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.KeyVault/vaults/test-kv",
               "KeyEncryptionAlgorithm": "RSA-OAEP",
               "VolumeType": "All"
