@@ -2,12 +2,12 @@ resource "time_static" "password_timestamp" {
   count = var.rotate_admin_state_password && var.generate_admin_password ? 1 : 0
 
   triggers = {
-    always_run = "${timestamp()}"
+    always_run = timestamp()
   }
 }
 
 resource "terraform_data" "password_timestamp" {
-  input = try(time_static.password_timestamp.*.triggers.always_run, null)
+  input = try(time_static.password_timestamp[*].triggers.always_run, null)
 }
 
 resource "random_password" "admin_password" {

@@ -9,10 +9,6 @@ terraform {
   }
 }
 
-variable "admin_password" {
-  description = "The password for the local administrator account"
-}
-
 module "des" {
   source                    = "github.com/schubergphilis/terraform-azure-mcaf-diskencryptionset?ref=v0.1.0"
   name                      = "testdes"

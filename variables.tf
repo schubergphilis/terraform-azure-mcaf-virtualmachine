@@ -76,39 +76,6 @@ variable "availability_set_resource_id" {
   description = "(Optional) Specifies the Azure Resource ID of the Availability Set in which the Virtual Machine should exist. Cannot be used along with `new_availability_set`, `new_capacity_reservation_group`, `capacity_reservation_group_id`, `virtual_machine_scale_set_id`, `zone`. Changing this forces a new resource to be created."
 }
 
-variable "azure_backup_configurations" {
-  type = map(object({
-    resource_group_name       = optional(string, null)
-    recovery_vault_name       = string
-    backup_policy_resource_id = optional(string, null)
-    exclude_disk_luns         = optional(list(number), null)
-    include_disk_luns         = optional(list(number), null)
-    protection_state          = optional(string, null)
-  }))
-  default     = {}
-  description = <<DESCRIPTION
-This object describes the backup configuration to use for this VM instance. Provide the backup details for configuring the backup. It defaults to null.
-
-- `<map_key>` - An arbitrary map key to avoid terraform issues with know before apply challenges
-  - `resource_group_name` - (Optional) - The resource group name for the resource group containing the recovery services vault. If not supplied it will default to the deployment resource group.
-  - `recovery_vault_name` - (Required) - The name of the recovery services vault where the backup will be stored.
-  - `backup_policy_resource_id`    - (Optional) - Required during creation, but can be optional when the protection state is not `ProtectionStopped`.
-  - `exclude_disk_luns`   - (Optional) - A list of Disk Logical Unit Numbers (LUN) to be excluded from VM Protection.
-  - `include_disk_luns`   - (Optional) - A list of Disk Logical Unit Numbers (LUN) to be included for VM Protection.
-  - `protection_state`    - (Optional) - Specifies the protection state of the backup. Possible values are `Invalid`, `Protected`, `ProtectionStopped`, `ProtectionError`, and `ProtectionPaused`.
-
-Example Input:
-azure_backup_configurations = {
-  arbitrary_key = {
-    resource_group_name = azurerm_recovery_services_vault.test_vault.resource_group_name
-    recovery_vault_name = azurerm_recovery_services_vault.test_vault.name
-    backup_policy_resource_id    = azurerm_backup_policy_vm.test_policy.id
-    exclude_disk_luns   = [1]
-  }
-}
-DESCRIPTION
-}
-
 variable "boot_diagnostics" {
   type        = bool
   default     = false
@@ -298,46 +265,6 @@ variable "dedicated_host_resource_id" {
   type        = string
   default     = null
   description = "(Optional) The Azure Resource ID of the dedicated host where this virtual machine should run. Conflicts with dedicated_host_group_resource_id (dedicated_host_group_id on the azurerm provider)"
-}
-
-variable "diagnostic_settings" {
-  type = map(object({
-    name                                     = optional(string, null)
-    log_categories                           = optional(set(string), [])
-    log_groups                               = optional(set(string), [])
-    metric_categories                        = optional(set(string), ["AllMetrics"])
-    log_analytics_destination_type           = optional(string, "Dedicated")
-    workspace_resource_id                    = optional(string, null)
-    storage_account_resource_id              = optional(string, null)
-    event_hub_authorization_rule_resource_id = optional(string, null)
-    event_hub_name                           = optional(string, null)
-    marketplace_partner_resource_id          = optional(string, null)
-  }))
-  default     = {}
-  description = <<DIAGNOSTIC_SETTINGS
-This map object is used to define the diagnostic settings on the virtual machine.  This functionality does not implement the diagnostic settings extension, but instead can be used to configure sending the vm metrics to one of the standard targets.
-
-- `<map_key>` - unique key to define the map element
-  - `name`                                     = (required) - Name to use for the Diagnostic setting configuration.  Changing this creates a new resource
-  - `log_categories_and_groups`                = (Optional) - List of strings used to define log categories and groups. Currently not valid for the VM resource
-  - `metric_categories`                        = (Optional) - List of strings used to define metric categories. Currently only AllMetrics is valid
-  - `log_analytics_destination_type`           = (Optional) - Valid values are null, AzureDiagnostics, and Dedicated.  Defaults to null
-  - `workspace_resource_id`                    = (Optional) - The Log Analytics Workspace Azure Resource ID when sending logs or metrics to a Log Analytics Workspace
-  - `storage_account_resource_id`              = (Optional) - The Storage Account Azure Resource ID when sending logs or metrics to a Storage Account
-  - `event_hub_authorization_rule_resource_id` = (Optional) - The Event Hub Namespace Authorization Rule Resource ID when sending logs or metrics to an Event Hub Namespace
-  - `event_hub_name`                           = (Optional) - The Event Hub name when sending logs or metrics to an Event Hub
-  - `marketplace_partner_resource_id`          = (Optional) - The marketplace partner solution Azure Resource ID when sending logs or metrics to a partner integration
-
-Example Input:
-  diagnostic_settings = {
-    vm_diags = {
-      name                  = module.naming.monitor_diagnostic_setting.name_unique
-      workspace_resource_id = azurerm_log_analytics_workspace.this_workspace.id
-      metric_categories     = ["AllMetrics"]
-    }
-  }
-DIAGNOSTIC_SETTINGS
-  nullable    = false
 }
 
 variable "disk_controller_type" {
@@ -532,33 +459,6 @@ variable "license_type" {
   type        = string
   default     = null
   description = "(Optional) For Linux virtual machine specifies the BYOL Type for this Virtual Machine, possible values are `RHEL_BYOS` and `SLES_BYOS`. For Windows virtual machine specifies the type of on-premise license (also known as [Azure Hybrid Use Benefit](https://docs.microsoft.com/windows-server/get-started/azure-hybrid-benefit)) which should be used for this Virtual Machine, possible values are `None`, `Windows_Client` and `Windows_Server`."
-}
-
-variable "lock" {
-  type = object({
-    name = optional(string, null)
-    kind = string
-  })
-  default     = null
-  description = <<LOCK
-"The lock configuration to apply to this virtual machine and all of it's child resources. The following properties are specified.
-
-- `kind` - (Required) - The type of the lock.  Possible values are `CanNotDelete` and `ReadOnly`.
-- `name` - (Optional) - The name of the lock.  If not specified, a name will be generated based on the `kind` value. Changing this forces the creation of a new resource.
-
-Example Inputs:
-```hcl
-lock = {
-  name = "lock-{resourcename}" # optional
-  type = "CanNotDelete"
-}
-```
-LOCK
-
-  validation {
-    condition     = var.lock != null ? contains(["CanNotDelete", "ReadOnly"], var.lock.kind) : true
-    error_message = "Lock kind must be either `\"CanNotDelete\"` or `\"ReadOnly\"`."
-  }
 }
 
 variable "managed_identities" {

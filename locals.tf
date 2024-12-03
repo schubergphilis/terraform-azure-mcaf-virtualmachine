@@ -7,17 +7,7 @@ locals {
   admin_password_windows = (lower(var.os_type) == "windows") ? (
     var.generate_admin_password ? try(random_password.admin_password[0].result, null) : var.admin_password
   ) : null
-  admin_ssh_keys = concat(var.admin_ssh_keys)
-  #flatten the role assignments for the disks
-  disks_role_assignments = { for ra in flatten([
-    for dk, dv in var.data_disk_managed_disks : [
-      for rk, rv in dv.role_assignments : {
-        disk_key        = dk
-        ra_key          = rk
-        role_assignment = rv
-      }
-    ]
-  ]) : "${ra.disk_key}-${ra.ra_key}" => ra }
+  admin_ssh_keys                       = concat(var.admin_ssh_keys)
   generated_secret_expiration_date_utc = var.generated_secrets_key_vault_secret_config != null ? formatdate("YYYY-MM-DD'T'hh:mm:ssZ", (timeadd(timestamp(), "${var.generated_secrets_key_vault_secret_config.expiration_date_length_in_days * 24}h"))) : null
   linux_virtual_machine_output_map = (lower(var.os_type) == "linux") ? {
     id                   = azurerm_linux_virtual_machine.this[0].id
@@ -40,16 +30,6 @@ locals {
       }
     ]
   ]) : "${asg.nic_key}-${asg.asg_key}" => asg }
-  #flatten the diag settings for the nics
-  nics_diag_settings = { for ds in flatten([
-    for nk, nv in var.network_interfaces : [
-      for dk, dv in nv.diagnostic_settings : {
-        nic_key            = nk
-        ds_key             = dk
-        diagnostic_setting = dv
-      }
-    ]
-  ]) : "${ds.nic_key}-${ds.ds_key}" => ds }
   #flatten the ip_configs for the nics
   nics_ip_configs = { for ip_config in flatten([
     for nk, nv in var.network_interfaces : [
@@ -112,16 +92,6 @@ locals {
       }
     ]
   ]) : "${nsg.nic_key}-${nsg.nsg_key}" => nsg }
-  #flatten the role assignments for the nics
-  nics_role_assignments = { for ra in flatten([
-    for nk, nv in var.network_interfaces : [
-      for rk, rv in nv.role_assignments : {
-        nic_key         = nk
-        ra_key          = rk
-        role_assignment = rv
-      }
-    ]
-  ]) : "${ra.nic_key}-${ra.ra_key}" => ra }
   #concat the input variable with the simple list going forward - this is a placeholder so that we can continue to reference the local source image reference value when it includes the simpleOS option.
   source_image_reference = var.source_image_reference
   #get the first system managed identity id if it is provisioned and depending on whether the vm type is linux or windows
