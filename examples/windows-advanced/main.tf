@@ -39,7 +39,7 @@ module "vm" {
     key_vault_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.KeyVault/vaults/test-kv"
   }
 
-  zone = ["1"]
+  zone = "2"
   network_interfaces = {
     network_interface_1 = {
       name = "vm-nic1"

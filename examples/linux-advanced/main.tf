@@ -30,7 +30,7 @@ module "vm" {
   resource_group_name = "test-rg"
   sku_size            = "Standard_D2as_v5"
   admin_username      = "Godmode123"
-  zone                = ["1"]
+  zone                = "3"
   network_interfaces = {
     network_interface_1 = {
       name = "vm-nic1"
