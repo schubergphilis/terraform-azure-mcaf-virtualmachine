@@ -23,8 +23,8 @@ module "vm" {
       name = "vm-nic1"
       ip_configurations = {
         ip_configuration_1 = {
-          name                          = "${module.naming["swan"].naming.compute_web.virtual_machine}-${each.key}-ipconfig1"
-          private_ip_subnet_resource_id = module.network.subnets["VMSubnet1"].id
+          name                          = "testlinvm-ipconfig1"
+          private_ip_subnet_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet"
         }
       }
     }
