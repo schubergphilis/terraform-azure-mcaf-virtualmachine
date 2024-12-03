@@ -87,6 +87,8 @@ module "vm" {
     version   = "latest"
   }
 
+  custom_data = filebase64("cloudinit/cloud-init.sh")
+
   os_disk = {
     name                   = "testlinvm-osdisk"
     size_gb                = 128
