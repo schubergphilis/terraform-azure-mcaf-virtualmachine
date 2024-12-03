@@ -23,7 +23,7 @@ variable "network_interfaces" {
       public_ip_address_name        = optional(string)
       public_ip_address_resource_id = optional(string)
     }))
-    accelerated_networking_enabled = optional(bool, false)
+    accelerated_networking_enabled = optional(bool, true)
     application_security_groups = optional(map(object({
       application_security_group_resource_id = string
     })), {})
@@ -87,7 +87,7 @@ A map of objects representing each network virtual machine network interface
       - `private_ip_address_version`                                  = (Optional) - The IP Version to use. Possible values are IPv4 or IPv6. Defaults to IPv4.
       - `private_ip_subnet_resource_id`                               = (Optional) - The Azure Resource ID of the Subnet where this Network Interface should be located in.
       - `public_ip_address_resource_id`                               = (Optional) - Reference to a Public IP Address resource ID to associate with this NIC
-  - `accelerated_networking_enabled`                                  = (Optional) - Should Accelerated Networking be enabled? Defaults to false. Only certain Virtual Machine sizes are supported for Accelerated Networking. To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.
+  - `accelerated_networking_enabled`                                  = (Optional) - Should Accelerated Networking be enabled? Defaults to true. Only certain Virtual Machine sizes are supported for Accelerated Networking. To use Accelerated Networking in an Availability Set, the Availability Set must be deployed onto an Accelerated Networking enabled cluster.
   - `application_security_groups`                                     = (Optional) - A map defining the Application Security Group(s) that this network interface should be a part of.
     - `<map key>` - Use a custom map key to define each Application Security Group association.  This is done to handle issues with certain details not being known until after apply.
       - `application_security_group_resource_id`                     = (Required) - The Application Security Group (ASG) Azure Resource ID for this Network Interface to be associated to.

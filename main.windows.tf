@@ -176,8 +176,8 @@ resource "azurerm_windows_virtual_machine" "this" {
 
   lifecycle {
     ignore_changes = [
-      winrm_listener # Once the certificate got rotated, it will triger a destroy/recreate of the VM.
+      winrm_listener, # Once the certificate got rotated, it will triger a destroy/recreate of the VM.
+      admin_password  # Once the password got removed, it will triger a destroy/recreate of the VM.
     ]
   }
 }
-

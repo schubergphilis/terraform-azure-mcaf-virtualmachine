@@ -31,14 +31,21 @@ variable "zone" {
 variable "admin_password" {
   type        = string
   default     = null
-  description = "Password to use for the default admin account created for the virtual machine. Passing this as a key vault secret value is recommended."
+  description = "Password to use for the default admin account created for the virtual machine. Passing this as a key vault secret value is recommended!, its in the lifecycle, so it will not recreate the vm when its changed."
   sensitive   = true
 }
 
-variable "admin_password_key_vault_secret_name" {
-  type        = string
-  default     = null
-  description = "DEPRECATION NOTICE: This input will be removed in favor of the name attribute in the `generated_secrets_key_vault_secret_config` input. The name of the key vault secret which should be used for the auto-generated admin password. This is only used to store auto-generated passwords. Use the `admin_password` variable and a key vault secret value reference if storing the password value in an external key vault secret."
+variable "rotate_admin_state_password" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+  Recreate the password, that have useless password in state, make sure to run it at least once if you generate it.
+
+  If you want to stop the pipeline from re-generating the password, set it to false!
+  This is a work around to just make sure if you use the generate_admin_password feature, it will no be kept in state
+  preffered is ofcourse to specify the password another way
+
+  DESCRIPTION
 }
 
 variable "admin_username" {
@@ -494,10 +501,10 @@ GALLERY_APPLICATIONS
   nullable    = false
 }
 
-variable "generate_admin_password_or_ssh_key" {
+variable "generate_admin_password" {
   type        = bool
-  default     = true
-  description = "Set this value to true if the deployment should create a strong password for the admin user. If `os_type` is Linux, this will generate and store an SSH key as the default. However, setting `disable_password_authentication` to `false` will generate and store a password value instead of an ssh key."
+  default     = false
+  description = "Set this value to true if the deployment should create a strong password for the admin user."
 }
 
 variable "generated_secrets_key_vault_secret_config" {
@@ -511,7 +518,7 @@ variable "generated_secrets_key_vault_secret_config" {
   })
   default     = null
   description = <<DESCRIPTION
-For simplicity this module provides the option to use an auto-generated admin user password or SSH key.  That password or key is then stored in a key vault provided in the `admin_credential_key_vault_resource_id` input. This variable allows the user to override the configuration for the key vault secret which stores the generated password or ssh key. The object details are:
+For simplicity this module provides the option to use an auto-generated admin user password.  That password or key is then stored in a key vault provided in the `admin_credential_key_vault_resource_id` input. This variable allows the user to override the configuration for the key vault secret which stores the generated password or ssh key. The object details are:
 
 - `name` - (Optional) - The name to use for the key vault secret that stores the auto-generated ssh key or password
 - `expiration_date_length_in_days` - (Optional) - This value sets the number of days from the installation date to set the key vault expiration value. It defaults to `45` days.  This value will not be overridden in subsequent runs. If you need to maintain this virtual machine resource for a long period, generate and/or use your own password or ssh key.

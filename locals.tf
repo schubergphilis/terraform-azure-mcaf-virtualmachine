@@ -1,22 +1,13 @@
 locals {
   admin_password_linux = (lower(var.os_type) == "linux") ? (
-    var.disable_password_authentication == false ? (                                                         #if os is linux and password authentication is enabled
-      var.generate_admin_password_or_ssh_key ? random_password.admin_password[0].result : var.admin_password #use generated password, password variable
+    var.disable_password_authentication == false ? (
+      var.generate_admin_password ? try(random_password.admin_password[0].result, null) : var.admin_password
     ) : null
   ) : null
-  #set the admin password to either a generated value or the entered value
   admin_password_windows = (lower(var.os_type) == "windows") ? (
-    var.generate_admin_password_or_ssh_key ? random_password.admin_password[0].result : var.admin_password #use generated password, password variable
+    var.generate_admin_password ? try(random_password.admin_password[0].result, null) : var.admin_password
   ) : null
-  #format the admin ssh key so it can be concat'ed to the other keys.
-  admin_ssh_key = (((var.generate_admin_password_or_ssh_key == true) && (lower(var.os_type) == "linux")) ?
-    [{
-      public_key = tls_private_key.this[0].public_key_openssh
-      username   = var.admin_username
-    }] :
-  [])
-  #concat the ssh key values list
-  admin_ssh_keys = concat(var.admin_ssh_keys, local.admin_ssh_key)
+  admin_ssh_keys = concat(var.admin_ssh_keys)
   #flatten the role assignments for the disks
   disks_role_assignments = { for ra in flatten([
     for dk, dv in var.data_disk_managed_disks : [
