@@ -516,7 +516,7 @@ variable "os_disk" {
   })
   default = {
     caching              = "ReadWrite"
-    storage_account_type = "Premium_LRS"
+    storage_account_type = "StandardSSD_ZRS"
   }
   description = <<OS_DISK
 Required configuration values for the OS disk on the virtual machine.
@@ -557,8 +557,8 @@ OS_DISK
 
 variable "patch_assessment_mode" {
   type        = string
-  default     = "ImageDefault"
-  description = "(Optional) Specifies the mode of VM Guest Patching for the Virtual Machine. Possible values are `AutomaticByPlatform` or `ImageDefault`. Defaults to `ImageDefault`."
+  default     = "AutomaticByPlatform"
+  description = "(Optional) Specifies the mode of VM Guest Patching for the Virtual Machine. Possible values are `AutomaticByPlatform` or `ImageDefault`. Defaults to `AutomaticByPlatform`."
 }
 
 variable "patch_mode" {
