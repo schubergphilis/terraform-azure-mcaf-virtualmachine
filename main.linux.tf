@@ -166,3 +166,21 @@ resource "azurerm_linux_virtual_machine" "this" {
     ignore_changes = [vm_agent_platform_updates_enabled]
   }
 }
+
+
+# https://github.com/hashicorp/terraform-provider-azurerm/issues/15156
+# https://github.com/Azure/azure-rest-api-specs/issues/21325
+
+resource "azapi_update_resource" "disk" {
+  count = (lower(var.os_type) == "linux") ? 1 : 0
+
+  type      = "Microsoft.Compute/disks@2023-01-02"
+  name      = azurerm_linux_virtual_machine.vm.os_disk[0].name
+  parent_id = var.resource_group_name
+  body = jsonencode({
+    properties = {
+      networkAccessPolicy = var.os_disk_managed_disks.networkAccessPolicy
+      publicNetworkAccess = var.os_disk_managed_disks.public_network_access_enabled
+    }
+  })
+}

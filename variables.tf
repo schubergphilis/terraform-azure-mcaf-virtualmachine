@@ -118,6 +118,13 @@ variable "custom_data" {
   }
 }
 
+variable "os_disk_managed_disk" {
+  type = object({
+    networkAccessPolicy = optional(string, "DenyAll")
+    publicNetworkAccess = optional(string, "Disabled")
+  })
+}
+
 variable "data_disk_managed_disks" {
   type = map(object({
     caching                                   = string
