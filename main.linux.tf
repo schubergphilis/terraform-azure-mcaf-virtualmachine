@@ -179,8 +179,8 @@ resource "azapi_update_resource" "linux_os_disk" {
   parent_id = var.resource_group_name
   body = jsonencode({
     properties = {
-      networkAccessPolicy = var.os_disk_managed_disks.networkAccessPolicy
-      publicNetworkAccess = var.os_disk_managed_disks.public_network_access_enabled
+      networkAccessPolicy = var.os_disk_managed_disk.networkAccessPolicy
+      publicNetworkAccess = var.os_disk_managed_disk.public_network_access_enabled
     }
   })
 
