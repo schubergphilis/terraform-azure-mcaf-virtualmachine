@@ -197,4 +197,8 @@ resource "azapi_update_resource" "windows_os_disk" {
       publicNetworkAccess = var.os_disk_managed_disks.public_network_access_enabled
     }
   })
+
+  depends_on = [
+    azurerm_windows_virtual_machine.this
+  ]
 }

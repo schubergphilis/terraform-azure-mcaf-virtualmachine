@@ -183,4 +183,8 @@ resource "azapi_update_resource" "linux_os_disk" {
       publicNetworkAccess = var.os_disk_managed_disks.public_network_access_enabled
     }
   })
+
+  depends_on = [
+    azurerm_linux_virtual_machine.this
+  ]
 }
