@@ -185,7 +185,7 @@ resource "azurerm_windows_virtual_machine" "this" {
 # https://github.com/hashicorp/terraform-provider-azurerm/issues/15156
 # https://github.com/Azure/azure-rest-api-specs/issues/21325
 
-resource "azapi_update_resource" "disk" {
+resource "azapi_update_resource" "windows_os_disk" {
   count = (lower(var.os_type) == "windows") ? 1 : 0
 
   type      = "Microsoft.Compute/disks@2023-01-02"
