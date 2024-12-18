@@ -147,7 +147,7 @@ variable "data_disk_managed_disks" {
     optimized_frequent_attach_enabled         = optional(bool, false)
     os_type                                   = optional(string)
     performance_plus_enabled                  = optional(bool, false)
-    public_network_access_enabled             = optional(bool)
+    public_network_access_enabled             = optional(bool, false)
     resource_group_name                       = optional(string)
     secure_vm_disk_encryption_set_resource_id = optional(string)
     security_type                             = optional(string)
