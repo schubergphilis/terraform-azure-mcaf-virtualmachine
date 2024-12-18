@@ -176,13 +176,14 @@ resource "azapi_update_resource" "linux_os_disk" {
 
   type      = "Microsoft.Compute/disks@2023-01-02"
   name      = azurerm_linux_virtual_machine.this[0].os_disk[0].name
-  parent_id = var.resource_group_name
-  body = jsonencode({
+  parent_id = data.azurerm_resource_group.this.id
+
+  body = {
     properties = {
       networkAccessPolicy = var.os_disk_managed_disk.network_access_policy
       publicNetworkAccess = var.os_disk_managed_disk.public_network_access_enabled
     }
-  })
+  }
 
   depends_on = [
     azurerm_linux_virtual_machine.this
