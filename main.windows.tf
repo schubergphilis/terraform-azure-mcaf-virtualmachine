@@ -193,7 +193,7 @@ resource "azapi_update_resource" "windows_os_disk" {
   parent_id = var.resource_group_name
   body = jsonencode({
     properties = {
-      networkAccessPolicy = var.os_disk_managed_disk.networkAccessPolicy
+      networkAccessPolicy = var.os_disk_managed_disk.network_access_policy
       publicNetworkAccess = var.os_disk_managed_disk.public_network_access_enabled
     }
   })

@@ -120,20 +120,20 @@ variable "custom_data" {
 
 variable "os_disk_managed_disk" {
   type = object({
-    networkAccessPolicy = optional(string, "DenyAll")
-    publicNetworkAccess = optional(string, "Disabled")
+    network_access_policy         = optional(string, "DenyAll")
+    public_network_access_enabled = optional(string, "Disabled")
   })
   default     = {}
   description = <<OS_DISK_MANAGED_DISK
 This variable is an object used to define the managed disk settings for the OS disk of the virtual machine.
 
-- `networkAccessPolicy` (Optional) - Policy for accessing the disk via network. Allowed values are AllowAll, AllowPrivate, and DenyAll.
-- `publicNetworkAccess` (Optional) - Whether it is allowed to access the disk via public network. Defaults to Disabled.
+- `network_access_policy` (Optional) - Policy for accessing the disk via network. Allowed values are AllowAll, AllowPrivate, and DenyAll.
+- `public_network_access_enabled` (Optional) - Whether it is allowed to access the disk via public network. Defaults to Disabled.
 
 ```hcl
 os_disk_managed_disk = {
-  networkAccessPolicy = "AllowPrivate"
-  publicNetworkAccess = "Enabled"
+  network_access_policy = "AllowPrivate"
+  public_network_access_enabled = "Enabled"
 }
 ```
 
