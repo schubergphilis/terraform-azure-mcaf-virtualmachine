@@ -118,6 +118,28 @@ variable "custom_data" {
   }
 }
 
+variable "os_disk_managed_disk" {
+  type = object({
+    network_access_policy         = optional(string, "DenyAll")
+    public_network_access_enabled = optional(string, "Disabled")
+  })
+  default     = {}
+  description = <<OS_DISK_MANAGED_DISK
+This variable is an object used to define the managed disk settings for the OS disk of the virtual machine.
+
+- `network_access_policy` (Optional) - Policy for accessing the disk via network. Allowed values are AllowAll, AllowPrivate, and DenyAll.
+- `public_network_access_enabled` (Optional) - Whether it is allowed to access the disk via public network. Defaults to Disabled.
+
+```hcl
+os_disk_managed_disk = {
+  network_access_policy = "AllowPrivate"
+  public_network_access_enabled = "Enabled"
+}
+```
+
+OS_DISK_MANAGED_DISK
+}
+
 variable "data_disk_managed_disks" {
   type = map(object({
     caching                                   = string
@@ -147,7 +169,7 @@ variable "data_disk_managed_disks" {
     optimized_frequent_attach_enabled         = optional(bool, false)
     os_type                                   = optional(string)
     performance_plus_enabled                  = optional(bool, false)
-    public_network_access_enabled             = optional(bool)
+    public_network_access_enabled             = optional(bool, false)
     resource_group_name                       = optional(string)
     secure_vm_disk_encryption_set_resource_id = optional(string)
     security_type                             = optional(string)
