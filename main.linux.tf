@@ -163,7 +163,10 @@ resource "azurerm_linux_virtual_machine" "this" {
 
   # https://github.com/hashicorp/terraform-provider-azurerm/issues/27484
   lifecycle {
-    ignore_changes = [vm_agent_platform_updates_enabled]
+    ignore_changes = [
+      vm_agent_platform_updates_enabled,
+      custom_data
+    ]
   }
 }
 
