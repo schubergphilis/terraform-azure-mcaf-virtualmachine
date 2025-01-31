@@ -9,17 +9,26 @@ locals {
   ) : null
   admin_ssh_keys                       = concat(var.admin_ssh_keys)
   generated_secret_expiration_date_utc = var.generated_secrets_key_vault_secret_config != null ? formatdate("YYYY-MM-DD'T'hh:mm:ssZ", (timeadd(timestamp(), "${var.generated_secrets_key_vault_secret_config.expiration_date_length_in_days * 24}h"))) : null
-  linux_virtual_machine_output_map = (lower(var.os_type) == "linux") ? {
-    id                   = azurerm_linux_virtual_machine.this[0].id
-    identity             = azurerm_linux_virtual_machine.this[0].identity
-    private_ip_address   = azurerm_linux_virtual_machine.this[0].private_ip_address
-    private_ip_addresses = azurerm_linux_virtual_machine.this[0].private_ip_addresses
-    public_ip_address    = azurerm_linux_virtual_machine.this[0].public_ip_address
-    public_ip_addresses  = azurerm_linux_virtual_machine.this[0].public_ip_addresses
-    virtual_machine_id   = azurerm_linux_virtual_machine.this[0].virtual_machine_id
-  } : null
+
   #set the type value for the managed identity that is used by azurerm
-  managed_identity_type = var.managed_identities.system_assigned ? ((length(var.managed_identities.user_assigned_resource_ids) > 0) ? "SystemAssigned, UserAssigned" : "SystemAssigned") : ((length(var.managed_identities.user_assigned_resource_ids) > 0) ? "UserAssigned" : null)
+  managed_identity_type = (
+    var.guest_configuration_extension ? (
+      length(var.managed_identities.user_assigned_resource_ids) > 0
+      ? "SystemAssigned, UserAssigned"
+      : "SystemAssigned"
+      ) : (
+      var.managed_identities.system_assigned ? (
+        length(var.managed_identities.user_assigned_resource_ids) > 0
+        ? "SystemAssigned, UserAssigned"
+        : "SystemAssigned"
+        ) : (
+        length(var.managed_identities.user_assigned_resource_ids) > 0
+        ? "UserAssigned"
+        : null
+      )
+    )
+  )
+
   #flatten the ASG's for the nics
   nics_asgs = { for asg in flatten([
     for nk, nv in var.network_interfaces : [
@@ -100,7 +109,17 @@ locals {
   #tags = var.inherit_tags ? merge(data.azurerm_resource_group.virtualmachine_deployment.tags, var.tags) : var.tags
   tags = var.tags
   #get the vm id value depending on whether the vm is linux or windows
-  virtualmachine_resource_id = (lower(var.os_type) == "windows") ? azurerm_windows_virtual_machine.this[0].id : azurerm_linux_virtual_machine.this[0].id
+
+  linux_virtual_machine_output_map = (lower(var.os_type) == "linux") ? {
+    id                   = azurerm_linux_virtual_machine.this[0].id
+    identity             = azurerm_linux_virtual_machine.this[0].identity
+    private_ip_address   = azurerm_linux_virtual_machine.this[0].private_ip_address
+    private_ip_addresses = azurerm_linux_virtual_machine.this[0].private_ip_addresses
+    public_ip_address    = azurerm_linux_virtual_machine.this[0].public_ip_address
+    public_ip_addresses  = azurerm_linux_virtual_machine.this[0].public_ip_addresses
+    virtual_machine_id   = azurerm_linux_virtual_machine.this[0].virtual_machine_id
+  } : null
+
   windows_virtual_machine_output_map = (lower(var.os_type) == "windows") ? {
     id                   = azurerm_windows_virtual_machine.this[0].id
     identity             = azurerm_windows_virtual_machine.this[0].identity
@@ -110,4 +129,6 @@ locals {
     public_ip_addresses  = azurerm_windows_virtual_machine.this[0].public_ip_addresses
     virtual_machine_id   = azurerm_windows_virtual_machine.this[0].virtual_machine_id
   } : null
+
+  virtualmachine_resource_id = (lower(var.os_type) == "windows") ? azurerm_windows_virtual_machine.this[0].id : azurerm_linux_virtual_machine.this[0].id
 }

@@ -60,6 +60,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       }
     }
   }
+
   dynamic "additional_capabilities" {
     for_each = var.vm_additional_capabilities == null ? [] : ["additional_capabilities"]
 
@@ -68,6 +69,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       ultra_ssd_enabled   = var.vm_additional_capabilities.ultra_ssd_enabled
     }
   }
+
   dynamic "admin_ssh_key" {
     for_each = toset(local.admin_ssh_keys)
 
@@ -76,6 +78,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       username   = admin_ssh_key.value.username
     }
   }
+
   dynamic "boot_diagnostics" {
     for_each = var.boot_diagnostics ? ["boot_diagnostics"] : []
 
@@ -83,6 +86,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       storage_account_uri = var.boot_diagnostics_storage_account_uri
     }
   }
+
   dynamic "gallery_application" {
     for_each = { for app, app_details in var.gallery_applications : app => app_details }
 
@@ -93,6 +97,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       tag                    = gallery_application.value.tag
     }
   }
+
   dynamic "identity" {
     for_each = local.managed_identity_type == null ? [] : ["identity"]
 
@@ -101,6 +106,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       identity_ids = var.managed_identities.user_assigned_resource_ids
     }
   }
+
   dynamic "plan" {
     for_each = var.plan == null ? [] : ["plan"]
 
@@ -110,6 +116,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       publisher = var.plan.publisher
     }
   }
+
   dynamic "secret" {
     for_each = toset(var.secrets)
 
@@ -125,6 +132,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       }
     }
   }
+
   dynamic "source_image_reference" {
     for_each = var.source_image_resource_id == null ? ["source_image_reference"] : []
 
@@ -135,6 +143,7 @@ resource "azurerm_linux_virtual_machine" "this" {
       version   = local.source_image_reference.version
     }
   }
+
   dynamic "termination_notification" {
     for_each = var.termination_notification == null ? [] : [
       "termination_notification"

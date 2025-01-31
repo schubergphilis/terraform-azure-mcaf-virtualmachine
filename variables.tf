@@ -477,6 +477,12 @@ For simplicity this module provides the option to use an auto-generated admin us
 DESCRIPTION
 }
 
+variable "guest_configuration_extension" {
+  type        = bool
+  default     = false
+  description = "(Optional) Set this value to true if the deployment should create a guest configuration extension for the virtual machine, this will also make sure you get a system assigned identity, since its required for this extension."
+}
+
 variable "license_type" {
   type        = string
   default     = null
