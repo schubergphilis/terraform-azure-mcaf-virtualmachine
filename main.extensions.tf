@@ -29,3 +29,14 @@ resource "azurerm_virtual_machine_extension" "this_extension" {
     azurerm_virtual_machine_data_disk_attachment.this_windows
   ]
 }
+
+resource "azurerm_virtual_machine_extension" "gc" {
+  count = var.guest_configuration_extension != false ? 1 : 0
+
+  name                       = (lower(var.os_type) == "linux") ? "AzurePolicyforLinux" : "AzurePolicyforWindows"
+  virtual_machine_id         = local.virtualmachine_resource_id
+  publisher                  = "Microsoft.GuestConfiguration"
+  type                       = (lower(var.os_type) == "linux") ? "ConfigurationForLinux" : "ConfigurationForWindows"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+}
