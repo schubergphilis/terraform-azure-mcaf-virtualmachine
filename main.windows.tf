@@ -201,7 +201,7 @@ resource "azapi_update_resource" "windows_os_disk" {
 
   type      = "Microsoft.Compute/disks@2023-01-02"
   name      = azurerm_windows_virtual_machine.this[0].os_disk[0].name
-  parent_id = provider::azurerm::parse_resource_id(azurerm_windows_virtual_machine.this[0].os_disk[0])
+  parent_id = data.azurerm_resource_group.this.id
 
   body = {
     properties = {
