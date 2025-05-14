@@ -200,7 +200,7 @@ resource "azapi_update_resource" "windows_os_disk" {
 
   type      = "Microsoft.Compute/disks@2023-01-02"
   name      = azurerm_windows_virtual_machine.this[0].os_disk[0].name
-  parent_id = "/Subscriptions/${local.virtualmachine_parsed_id["subscription_id"]}/resourcegroups/${local.virtualmachine_parsed_id["resource_group_name"]}"
+  parent_id = "/subscriptions/${local.virtualmachine_parsed_id["subscription_id"]}/resourceGroups/${local.virtualmachine_parsed_id["resource_group_name"]}"
 
   body = {
     properties = {
