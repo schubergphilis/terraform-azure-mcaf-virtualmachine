@@ -964,17 +964,6 @@ vm_additional_capabilities = {
 VM_ADDITIONAL_CAPABILITIES
 }
 
-variable "vm_agent_platform_updates_enabled" {
-  type        = bool
-  default     = true
-  description = <<DESCRIPTION
-
-  "(Optional) Specifies whether VMAgent Platform Updates is enabled. Defaults to `true`."
-  Default to true to match the default behavior of the Azure Portal, can only be set to false if you use custom images with the VM Agent installed, otherwise your plan/apply will try to adjust it each run.
-
-  DESCRIPTION
-}
-
 variable "vtpm_enabled" {
   type        = bool
   default     = true
