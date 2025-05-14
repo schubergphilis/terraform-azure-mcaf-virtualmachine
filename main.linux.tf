@@ -185,7 +185,7 @@ resource "azapi_update_resource" "linux_os_disk" {
 
   type      = "Microsoft.Compute/disks@2023-01-02"
   name      = azurerm_linux_virtual_machine.this[0].os_disk[0].name
-  parent_id = "/Subscriptions/${local.virtualmachine_resource_id["subscription_id"]}/resourcegroups/${local.virtualmachine_resource_id["resource_group_name"]}"
+  parent_id = "/Subscriptions/${local.virtualmachine_parsed_id["subscription_id"]}/resourcegroups/${local.virtualmachine_parsed_id["resource_group_name"]}"
 
   body = {
     properties = {
