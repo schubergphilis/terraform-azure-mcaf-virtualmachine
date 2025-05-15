@@ -131,5 +131,5 @@ locals {
   } : null
 
   virtualmachine_resource_id = (lower(var.os_type) == "windows") ? azurerm_windows_virtual_machine.this[0].id : azurerm_linux_virtual_machine.this[0].id
-  virtualmachine_parsed_id = provider::azurerm::parse_resource_id(local.virtualmachine_resource_id)
+  virtualmachine_parsed_id   = provider::azurerm::parse_resource_id(local.virtualmachine_resource_id)
 }
