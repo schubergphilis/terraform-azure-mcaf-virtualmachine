@@ -37,7 +37,6 @@ resource "azurerm_linux_virtual_machine" "this" {
   source_image_id                                        = var.source_image_resource_id
   user_data                                              = var.user_data
   virtual_machine_scale_set_id                           = var.virtual_machine_scale_set_resource_id
-  vm_agent_platform_updates_enabled                      = var.vm_agent_platform_updates_enabled
   vtpm_enabled                                           = var.vtpm_enabled
   zone                                                   = var.zone
 
@@ -170,10 +169,8 @@ resource "azurerm_linux_virtual_machine" "this" {
     azurerm_network_interface_nat_rule_association.this
   ]
 
-  # https://github.com/hashicorp/terraform-provider-azurerm/issues/27484
   lifecycle {
     ignore_changes = [
-      vm_agent_platform_updates_enabled,
       custom_data
     ]
   }
@@ -188,7 +185,7 @@ resource "azapi_update_resource" "linux_os_disk" {
 
   type      = "Microsoft.Compute/disks@2023-01-02"
   name      = azurerm_linux_virtual_machine.this[0].os_disk[0].name
-  parent_id = data.azurerm_resource_group.this.id
+  parent_id = "/subscriptions/${local.virtualmachine_parsed_id["subscription_id"]}/resourceGroups/${local.virtualmachine_parsed_id["resource_group_name"]}"
 
   body = {
     properties = {
@@ -196,8 +193,4 @@ resource "azapi_update_resource" "linux_os_disk" {
       publicNetworkAccess = var.os_disk_managed_disk.public_network_access_enabled
     }
   }
-
-  depends_on = [
-    azurerm_linux_virtual_machine.this
-  ]
 }
