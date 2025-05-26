@@ -49,6 +49,15 @@ az vm image list --location germanywestcentral --publisher MicrosoftWindowsServe
 az vm image list --location germanywestcentral --publisher Canonical --output table --query "[].{Publisher:publisher, Offer:offer, Sku:sku, Version:version}"
 ```
 
+### Guest Attestation
+
+This extension needs access to something like below to function properly.
+```
+GWC -> sharedden.den.attest.azure.net,shareddewc.dewc.attest.azure.net
+```
+make sure to open your firewall to allow traffic to it.
+
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 

@@ -413,6 +413,12 @@ EXTENSIONS
   }
 }
 
+variable "guest_attestation_extension" {
+  type        = bool
+  default     = true
+  description = "(Optional) Set this value to true if the deployment should create a guest attestation extension for the virtual machine."
+}
+
 variable "extensions_time_budget" {
   type        = string
   default     = "PT1H30M"
