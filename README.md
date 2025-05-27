@@ -51,7 +51,7 @@ az vm image list --location germanywestcentral --publisher Canonical --output ta
 
 ### Guest Attestation
 
-This extension needs access to something like below to function properly.
+This extension needs access to something like below to function properly, it will need port 443.
 ```
 GWC -> sharedden.den.attest.azure.net,shareddewc.dewc.attest.azure.net
 ```

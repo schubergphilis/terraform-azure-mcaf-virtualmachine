@@ -416,7 +416,12 @@ EXTENSIONS
 variable "guest_attestation_extension" {
   type        = bool
   default     = true
-  description = "(Optional) Set this value to true if the deployment should create a guest attestation extension for the virtual machine."
+  description = <<DESCRIPTION
+  Set this value to true if the deployment should create a guest attestation extension for the virtual machine.
+  This extension is used to verify the integrity of the virtual machine and its boot process. It is particularly useful for ensuring that the VM has not been tampered with and is running a trusted configuration.
+  it also needs vTPM and Secureboot enabled, they are also on by default.
+
+  DESCRIPTION
 }
 
 variable "extensions_time_budget" {
