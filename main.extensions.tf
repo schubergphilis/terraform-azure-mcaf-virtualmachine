@@ -40,3 +40,15 @@ resource "azurerm_virtual_machine_extension" "gc" {
   type_handler_version       = "1.0"
   auto_upgrade_minor_version = "true"
 }
+
+resource "azurerm_virtual_machine_extension" "guest_attestation" {
+  count = var.guest_attestation_extension == true && var.secure_boot_enabled == true && var.vtpm_enabled == true ? 1 : 0
+
+  name                       = "GuestAttestation"
+  virtual_machine_id         = local.virtualmachine_resource_id
+  publisher                  = var.os_type == "Linux" ? "Microsoft.Azure.Security.LinuxAttestation" : "Microsoft.Azure.Security.WindowsAttestation"
+  type                       = "GuestAttestation"
+  type_handler_version       = "1.0"
+  auto_upgrade_minor_version = "true"
+  automatic_upgrade_enabled  = "true"
+}
