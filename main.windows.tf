@@ -211,11 +211,11 @@ resource "azapi_update_resource" "windows_os_disk" {
 }
 
 resource "azapi_resource_action" "enable_winrm" {
-  count = (lower(var.os_type) == "windows") && var.winrm_listeners.https_listener_with_self_signed_cert ? 1 : 0
+  count       = (lower(var.os_type) == "windows") && var.winrm_listeners.https_listener_with_self_signed_cert ? 1 : 0
   type        = "Microsoft.Compute/virtualMachines@2024-11-01"
   resource_id = azurerm_windows_virtual_machine.this[0].id
-  action = "runCommand"
-  method = "POST"
+  action      = "runCommand"
+  method      = "POST"
 
   body = {
     commandId = "EnableRemotePS"
