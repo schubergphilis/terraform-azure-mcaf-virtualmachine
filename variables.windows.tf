@@ -22,7 +22,7 @@ variable "winrm_listeners" {
     listeners = set(object({
     protocol        = string
     certificate_url = optional(string)
-  }))
+  }), [])
   })
   default     = {}
   description = <<WINRM_LISTENERS
