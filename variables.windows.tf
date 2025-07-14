@@ -17,11 +17,14 @@ variable "enable_automatic_updates" {
 }
 
 variable "winrm_listeners" {
-  type = set(object({
+  type = object({
+    https_listener_with_self_signed_cert = optional(bool(false))
+    listeners = set(object({
     protocol        = string
     certificate_url = optional(string)
   }))
-  default     = []
+  })
+  default     = {}
   description = <<WINRM_LISTENERS
 Set of objects describing the winRM listener configuration for windows VM's using the following attributes:
 
