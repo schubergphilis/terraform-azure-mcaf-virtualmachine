@@ -18,7 +18,7 @@ variable "enable_automatic_updates" {
 
 variable "winrm_listeners" {
   type = object({
-    https_listener_with_self_signed_cert = optional(bool(false))
+    https_listener_with_self_signed_cert = optional(bool,false)
     listeners = set(object({
     protocol        = string
     certificate_url = optional(string)
