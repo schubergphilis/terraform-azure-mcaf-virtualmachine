@@ -50,6 +50,14 @@ resource "azurerm_managed_disk" "this" {
       }
     }
   }
+
+  lifecycle {
+    ignore_changes = [
+      create_option,
+      image_reference_id,
+      gallery_image_reference_id
+    ]
+  }
 }
 
 #attach the disk(s) to the virtual machine
@@ -62,6 +70,12 @@ resource "azurerm_virtual_machine_data_disk_attachment" "this_linux" {
   virtual_machine_id        = azurerm_linux_virtual_machine.this[0].id
   create_option             = each.value.disk_attachment_create_option
   write_accelerator_enabled = each.value.write_accelerator_enabled
+
+  lifecycle {
+    ignore_changes = [
+      create_option
+    ]
+  }
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "this_windows" {
@@ -73,4 +87,10 @@ resource "azurerm_virtual_machine_data_disk_attachment" "this_windows" {
   virtual_machine_id        = azurerm_windows_virtual_machine.this[0].id
   create_option             = each.value.disk_attachment_create_option
   write_accelerator_enabled = each.value.write_accelerator_enabled
+
+  lifecycle {
+    ignore_changes = [
+      create_option
+    ]
+  }
 }
