@@ -176,13 +176,15 @@ module "vm" {
       setting = "FirstLogonCommands"
     }
   ]
+  winrm_listeners = {
+    listeners = [
+      {
+        protocol        = "Https"
+        certificate_url = "https://keyvault.vault.azure.net/secrets/certificate-name"
+      }
+    ]
+  }
 
-  winrm_listeners = [
-    {
-      protocol        = "Https"
-      certificate_url = "https://keyvault.vault.azure.net/secrets/certificate-name"
-    }
-  ]
 
   tags = {
     environment = "dev"
