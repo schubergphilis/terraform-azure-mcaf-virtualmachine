@@ -26,8 +26,9 @@ variable "winrm_listeners" {
   })
   default     = {}
   description = <<WINRM_LISTENERS
-Set of objects describing the winRM listener configuration for windows VM's using the following attributes:
 
+- `https_listener_with_self_signed_cert` = (optional) Boolean value to enable winrm over https without supplyig a certificate url
+- `listeners`       = (optional) Set of objects describing the winRM listener configuration for windows VM's using the following attributes:
 - `protocol`        = (Required) Specifies Specifies the protocol of listener. Possible values are `Http` or `Https`
 - `certificate_url` = (Optional) The Secret URL of a Key Vault Certificate, which must be specified when `protocol` is set to `Https`. Changing this forces a new resource to be created.
 
@@ -35,18 +36,29 @@ Example Inputs:
 
 ```hcl
 #https example
-winrm_listeners = [
-  {
-  protocol = "Https"
-  certificate_url = data.azurerm_keyvault_secret.example.secret_id
-  }
-]
+winrm_listeners = {
+  listeners = [
+    {
+    protocol = "Https"
+    certificate_url = data.azurerm_keyvault_secret.example.secret_id
+    }
+  ]
+}
+
+or without cert url:
+
+winrm_listeners = {
+  https_listener_with_self_signed_cert = true
+}
+
 #http example
-winrm_listeners = [
-  {
+winrm_listeners = {
+  listeners = [
+    {
     protocol = "Http"
-  }
-]
+    }
+  ]
+}
 ```
 WINRM_LISTENERS
   nullable    = false
