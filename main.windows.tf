@@ -160,7 +160,7 @@ resource "azurerm_windows_virtual_machine" "this" {
   }
 
   dynamic "winrm_listener" {
-    for_each = var.winrm_listeners
+    for_each = var.winrm_listeners.listeners
 
     content {
       protocol        = winrm_listener.value.protocol
@@ -207,5 +207,17 @@ resource "azapi_update_resource" "windows_os_disk" {
       networkAccessPolicy = var.os_disk_managed_disk.network_access_policy
       publicNetworkAccess = var.os_disk_managed_disk.public_network_access_enabled
     }
+  }
+}
+
+resource "azapi_resource_action" "enable_winrm" {
+  count       = (lower(var.os_type) == "windows") && var.winrm_listeners.https_listener_with_self_signed_cert ? 1 : 0
+  type        = "Microsoft.Compute/virtualMachines@2024-11-01"
+  resource_id = azurerm_windows_virtual_machine.this[0].id
+  action      = "runCommand"
+  method      = "POST"
+
+  body = {
+    commandId = "EnableRemotePS"
   }
 }

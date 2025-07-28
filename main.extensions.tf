@@ -26,7 +26,8 @@ resource "azurerm_virtual_machine_extension" "this_extension" {
 
   depends_on = [
     azurerm_virtual_machine_data_disk_attachment.this_linux,
-    azurerm_virtual_machine_data_disk_attachment.this_windows
+    azurerm_virtual_machine_data_disk_attachment.this_windows,
+    azapi_resource_action.enable_winrm
   ]
 }
 
