@@ -25,6 +25,7 @@ variable "resource_group_name" {
 variable "zone" {
   type        = string
   description = "The Availability Zone which the Virtual Machine should be allocated in, only one zone would be accepted. If set then this module won't create `azurerm_availability_set` resource. Changing this forces a new resource to be created. This has been moved to a required value to comply with WAF guidance to intentionally select zones for resources as part of resource architectures. If deploying to a region without zones, set this value to null."
+  nullable    = true
 }
 
 ########## optional variables
