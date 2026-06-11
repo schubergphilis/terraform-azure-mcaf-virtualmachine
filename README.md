@@ -1,3 +1,9 @@
+<!-- migrate-repo:banner -->
+> [!IMPORTANT]
+> **This repository has moved to [`schubergphilis-ep/terraform-azure-mcaf-virtualmachine`](https://github.com/schubergphilis-ep/terraform-azure-mcaf-virtualmachine).**
+> Please update your references and use the new location for issues, PRs, and contributions.
+<!-- migrate-repo:banner -->
+
 # terraform-azure-mcaf-virtualmachine
 Terraform module to deploy virtual machines
 
